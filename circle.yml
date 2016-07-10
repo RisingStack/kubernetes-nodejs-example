@@ -1,0 +1,37 @@
+# required environment variables
+# $CLIENT_SECRET = Google Cloud secret json file in base64 format
+# $NPM_TOKEN = npm token for private packages
+machine:
+  pre:
+    # Update docker (default one doesn't support --build-arg for private npm)
+    - curl -sSL https://s3.amazonaws.com/circle-downloads/install-circleci-docker.sh | bash -s -- 1.10.0
+  node:
+    version: 4.4.5
+  services:
+    - docker
+
+test:
+  pre:
+    - npm install
+  override:
+    - npm run lint
+    - npm test
+
+deployment:
+  staging:
+    branch: master
+    commands:
+      # Auth gcloud
+      - echo $CLIENT_SECRET | base64 --decode > ${HOME}/client-secret.json
+      - gcloud auth activate-service-account --key-file ${HOME}/client-secret.json
+      # Build and push docker image
+      - docker build --build-arg NPM_TOKEN=${NPM_TOKEN} -t gcr.io/my-project/foo-service:$(git rev-parse --short HEAD) .
+      - gcloud docker push gcr.io/my-project/foo-service:$(git rev-parse --short HEAD)
+      # Init kubectl, sudo is required :/
+      - sudo /opt/google-cloud-sdk/bin/gcloud --quiet components update kubectl
+      - sudo /opt/google-cloud-sdk/bin/gcloud config set compute/zone europe-west1-c
+      - sudo /opt/google-cloud-sdk/bin/gcloud config set project my-project
+      - sudo /opt/google-cloud-sdk/bin/gcloud container clusters get-credentials trace
+      # Update deployment's image
+      # for latest Kubernetes only - sudo /opt/google-cloud-sdk/bin/kubectl --namespace=staging set image deployment/subscription --container=subscription --image=gcr.io/my-project/foo-service:$(git rev-parse --short HEAD)
+      - path_str=$(echo '{"spec":{"template":{"spec":{"containers":[{"name":"foo","image":"gcr.io/my-project/foo-service:TAG_NAME"}]}}}}' | sed -e "s/TAG_NAME/$(git rev-parse --short HEAD)/g"); sudo /opt/google-cloud-sdk/bin/kubectl --namespace=staging patch deployment foo -p $path_str --record

@@ -1,0 +1,33 @@
+{
+  "name": "kubernetes-nodejs-example",
+  "version": "1.0.0",
+  "description": "Kubernetes Node.js Example",
+  "scripts": {
+    "start": "node server/app.js",
+    "lint": "eslint server",
+    "test": "echo \"No test in this example\" && exit 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RisingStack/kubernetes-nodejs-example.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RisingStack/kubernetes-nodejs-example/issues"
+  },
+  "homepage": "https://github.com/RisingStack/kubernetes-nodejs-example#readme",
+  "dependencies": {
+    "express": "4.14.0",
+    "ioredis": "2.2.0",
+    "promise-callback": "3.0.3",
+    "winston": "2.2.0",
+    "winston-gke": "1.0.2"
+  },
+  "devDependencies": {
+    "eslint": "3.0.1",
+    "eslint-config-standard": "5.3.1",
+    "eslint-plugin-promise": "1.3.2",
+    "eslint-plugin-standard": "1.3.2"
+  }
+}
