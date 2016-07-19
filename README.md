@@ -2,6 +2,8 @@
 
 Example Node.js application with Kubernetes config yamls and CircleCI yaml to deploy.
 
+Read the related [Moving to Kubernetes](https://blog.risingstack.com/moving-node-js-from-paas-to-kubernetes-tutorial/) blog post.
+
 What's in repo?
 
 - Hello world Express server
@@ -13,5 +15,3 @@ What's in repo?
 - Kubernetes liveness (healthcheck)
 - Kubernetes readiness
 - CircleCI config example
-
-// TODO: link to blog post
