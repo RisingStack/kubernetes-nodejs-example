@@ -11,7 +11,7 @@ const redisUri = process.env.REDIS_URI
 
 // do not let start process without the DB uri, helps devops
 if (!redisUri) {
-  throw new Error('REDIS_URI' is required)
+  throw new Error('REDIS_URI is required')
 }
 
 const app = Express()
